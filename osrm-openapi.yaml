@@ -1,0 +1,214 @@
+openapi: 3.0.1
+info:
+  title: OSRM API v5.22.0
+  description: Open Source Routing Machine API
+  version: "1"
+servers:
+  - url: 'http://router.project-osrm.org'
+paths:
+  '/nearest/{version}/{profile}/{coordinate}.json':
+    get:
+      operationId: nearest
+      tags:
+        - OSRM
+      parameters:
+        ## ---- PATH DEFAULTS ----
+        - in: path
+          name: version
+          description: "Version of the protocol implemented by the service. v1 for all OSRM 5.x installations"
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: profile
+          description: "Mode of transportation, is determined statically by the Lua profile that is used to prepare the data using osrm-extract. Typically car, bike or foot if using one of the supplied profiles."
+          schema:
+            type: string
+          required: true
+        ## ---- QUERY DEFAULTS ----
+        - in: query
+          name: bearings
+          description: "Limits the search to segments with given bearing in degrees towards true north in clockwise direction."
+          schema:
+            type: string
+        - in: query
+          name: radiuses
+          description: "Limits the search to given radius in meters."
+          schema:
+            type: string
+        - in: query
+          name: generate_hints
+          description: "Adds a Hint to the response which can be used in subsequent requests, see hints parameter."
+          schema:
+            type: boolean
+        - in: query
+          name: hints
+          description: "Hint from previous request to derive position in street network."
+          schema:
+            type: string
+        - in: query
+          name: approaches
+          description: "Keep waypoints on curb side."
+          schema:
+            type: string
+        - in: query
+          name: exclude
+          description: "Additive list of classes to avoid, order does not matter."
+          schema:
+            type: string
+        ## ---- PATH ----
+        - in: path
+          name: coordinate
+          schema:
+            type: string
+          required: true
+        ## ---- QUERY ----
+        - in: query
+          name: number
+          description: "Number of nearest segments that should be returned."
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+  '/route/{version}/{profile}/{coordinates}':
+    get:
+      operationId: route
+      tags:
+        - OSRM
+      parameters:
+        ## ---- PATH DEFAULTS ----
+        - in: path
+          name: version
+          description: "Version of the protocol implemented by the service. v1 for all OSRM 5.x installations"
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: profile
+          description: "Mode of transportation, is determined statically by the Lua profile that is used to prepare the data using osrm-extract. Typically car, bike or foot if using one of the supplied profiles."
+          schema:
+            type: string
+          required: true
+        ## ---- QUERY DEFAULTS ----
+        - in: query
+          name: bearings
+          description: "Limits the search to segments with given bearing in degrees towards true north in clockwise direction."
+          schema:
+            type: string
+        - in: query
+          name: radiuses
+          description: "Limits the search to given radius in meters."
+          schema:
+            type: string
+        - in: query
+          name: generate_hints
+          description: "Adds a Hint to the response which can be used in subsequent requests, see hints parameter."
+          schema:
+            type: boolean
+        - in: query
+          name: hints
+          description: "Hint from previous request to derive position in street network."
+          schema:
+            type: string
+        - in: query
+          name: approaches
+          description: "Keep waypoints on curb side."
+          schema:
+            type: string
+        - in: query
+          name: exclude
+          description: "Additive list of classes to avoid, order does not matter."
+          schema:
+            type: string
+        ## ---- PATH ----
+        - in: path
+          name: coordinates
+          schema:
+            type: string
+          required: true
+        ## ---- QUERY ----
+        - in: query
+          name: alternatives
+          description: "Search for alternative routes. Passing a number alternatives=n searches for up to n alternative routes."
+          schema:
+            oneOf:
+              - type: boolean
+              - type: integer
+            default: false
+        - in: query
+          name: steps
+          description: "Returned route steps for each route leg"
+          schema:
+            type: boolean
+            default: false
+        - in: query
+          name: annotations
+          description: "Returns additional metadata for each coordinate along the route geometry."
+          schema:
+            enum:
+              - true
+              - false
+              - "nodes"
+              - "distance"
+              - "duration"
+              - "datasources"
+              - "weight"
+              - "speed"
+            default: false
+        - in: query
+          name: geometries
+          description: "Returned route geometry format (influences overview and per step)"
+          schema:
+            enum:
+              - "polyline"
+              - "polyline6"
+              - "geojson"
+            default: "polyline"
+        - in: query
+          name: overview
+          description: "Add overview geometry either full, simplified according to highest zoom level it could be display on, or not at all."
+          schema:
+            enum:
+              - "simplified"
+              - "full"
+              - false
+        - in: query
+          name: continue_straight
+          description: "Forces the route to keep going straight at waypoints constraining uturns there even if it would be faster. Default value depends on the profile."
+          schema:
+            enum:
+              - "default"
+              - true
+              - false
+        - in: query
+          name: waypoints
+          description: "Treats input coordinates indicated by given indices as waypoints in returned Match object. Default is to treat all input coordinates as waypoints."
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
