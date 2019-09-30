@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: OSRM API v5.22.0
   description: Open Source Routing Machine API
-  version: "1"
+  version: "0.1"
 servers:
   - url: 'http://router.project-osrm.org'
 paths:
