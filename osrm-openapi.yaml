@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: OSRM API v5.22.0
   description: Open Source Routing Machine API
-  version: "0.1"
+  version: "1"
 servers:
   - url: 'http://router.project-osrm.org'
 paths:
@@ -139,6 +139,7 @@ paths:
           name: coordinates
           schema:
             type: string
+          allowReserved: true
           required: true
         ## ---- QUERY ----
         - in: query
@@ -199,6 +200,89 @@ paths:
           description: "Treats input coordinates indicated by given indices as waypoints in returned Match object. Default is to treat all input coordinates as waypoints."
           schema:
             type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+  '/table/{version}/{profile}/{coordinates}':
+    get:
+      operationId: "table"
+      tags:
+        - OSRM
+      parameters:
+        ## ---- PATH DEFAULTS ----
+        - in: path
+          name: version
+          description: "Version of the protocol implemented by the service. v1 for all OSRM 5.x installations"
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: profile
+          description: "Mode of transportation, is determined statically by the Lua profile that is used to prepare the data using osrm-extract. Typically car, bike or foot if using one of the supplied profiles."
+          schema:
+            type: string
+          required: true
+        ## ---- QUERY DEFAULTS ----
+        - in: query
+          name: bearings
+          description: "Limits the search to segments with given bearing in degrees towards true north in clockwise direction."
+          schema:
+            type: string
+        - in: query
+          name: radiuses
+          description: "Limits the search to given radius in meters."
+          schema:
+            type: string
+        - in: query
+          name: generate_hints
+          description: "Adds a Hint to the response which can be used in subsequent requests, see hints parameter."
+          schema:
+            type: boolean
+        - in: query
+          name: hints
+          description: "Hint from previous request to derive position in street network."
+          schema:
+            type: string
+        - in: query
+          name: approaches
+          description: "Keep waypoints on curb side."
+          schema:
+            type: string
+        - in: query
+          name: exclude
+          description: "Additive list of classes to avoid, order does not matter."
+          schema:
+            type: string
+        ## ---- PATH ----
+        - in: path
+          name: coordinates
+          schema:
+            type: string
+          allowReserved: true
+          required: true
+        ## ---- QUERY ----
+        - in: query
+          name: sources
+          description: "Use location with given index as source."
+          schema:
+            type: string
+            default: "all"
+        - in: query
+          name: destinations
+          description: "Use location with given index as destination."
+          schema:
+            type: string
+            default: "all"
       responses:
         '200':
           description: OK
