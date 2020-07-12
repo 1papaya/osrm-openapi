@@ -78,7 +78,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Response'
+                  - $ref: '#/components/schemas/ApiResponse'
                   - type: object
                     properties:
                       waypoints:
@@ -90,7 +90,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response'
+                $ref: '#/components/schemas/ApiResponse'
   '/route/{version}/{profile}/{coordinates}':
     get:
       operationId: route
@@ -214,7 +214,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Response'
+                  - $ref: '#/components/schemas/ApiResponse'
                   - type: object
                     properties:
                       waypoints:
@@ -230,7 +230,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response'
+                $ref: '#/components/schemas/ApiResponse'
   '/table/{version}/{profile}/{coordinates}':
     get:
       operationId: "table"
@@ -308,7 +308,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Response'
+                  - $ref: '#/components/schemas/ApiResponse'
                   - type: object
                     properties:
                       durations:
@@ -344,10 +344,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response'
+                $ref: '#/components/schemas/ApiResponse'
 components:
   schemas:
-    Response:
+    ApiResponse:
       type: object
       required:
         - code
