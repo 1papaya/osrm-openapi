@@ -77,15 +77,7 @@ paths:
           content:
             application/json:
               schema:
-                x-all-of-name: 'NearestResponse'
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - type: object
-                    properties:
-                      waypoints:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/NearestWaypoint'
+                $ref: '#/components/schemas/NearestResponse'
         '400':
           description: Error
           content:
@@ -214,19 +206,7 @@ paths:
           content:
             application/json:
               schema:
-                x-all-of-name: 'RouteResponse'
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - type: object
-                    properties:
-                      waypoints:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Waypoint'
-                      routes:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Route'
+                $ref: '#/components/schemas/RouteResponse'
         '400':
           description: Error
           content:
@@ -309,39 +289,7 @@ paths:
           content:
             application/json:
               schema:
-                x-all-of-name: 'TableResponse'
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - type: object
-                    properties:
-                      durations:
-                        type: array
-                        items:
-                          type: array
-                          items:
-                            type: number
-                            format: float
-                      distances:
-                        type: array
-                        items:
-                          type: array
-                          items:
-                            type: number
-                            format: float
-                      sources:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Waypoint'
-                      destinations:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Waypoint'
-                      fallback_speed_cells:
-                        type: array
-                        items:
-                          type: array
-                          items:
-                            type: integer
+                $ref: '#/components/schemas/TableResponse'
         '400':
           description: Error
           content:
@@ -375,6 +323,61 @@ components:
         data_version:
           type: string
           format: date-time
+    NearestResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            waypoints:
+              type: array
+              items:
+                $ref: '#/components/schemas/NearestWaypoint'
+    RouteResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            waypoints:
+              type: array
+              items:
+                $ref: '#/components/schemas/Waypoint'
+            routes:
+              type: array
+              items:
+                $ref: '#/components/schemas/Route'
+    TableResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            durations:
+              type: array
+              items:
+                type: array
+                items:
+                  type: number
+                  format: float
+            distances:
+              type: array
+              items:
+                type: array
+                items:
+                  type: number
+                  format: float
+            sources:
+              type: array
+              items:
+                $ref: '#/components/schemas/Waypoint'
+            destinations:
+              type: array
+              items:
+                $ref: '#/components/schemas/Waypoint'
+            fallback_speed_cells:
+              type: array
+              items:
+                type: array
+                items:
+                  type: integer
     Route:
       type: object
       properties:
