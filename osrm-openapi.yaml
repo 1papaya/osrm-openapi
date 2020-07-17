@@ -693,10 +693,7 @@ components:
           items:
             type: string
         valid:
-          type: string
-          enum:
-            - "true"
-            - "false"
+          type: boolean
     Waypoint:
       type: object
       properties:
