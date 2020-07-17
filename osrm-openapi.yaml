@@ -577,7 +577,7 @@ components:
         name:
           type: string
         ref:
-          type: number
+          type: string
         pronunciation:
           type: string
         destinations:
