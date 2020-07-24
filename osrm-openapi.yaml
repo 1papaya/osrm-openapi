@@ -673,10 +673,7 @@ components:
         entry:
           type: array
           items:
-            type: string
-            enum:
-              - "true"
-              - "false"
+            type: bool
         in:
           type: integer
         out:
