@@ -486,6 +486,7 @@ components:
                 items:
                   type: number
                   format: float
+              description: array of arrays that stores the matrix in row-major order. durations[i][j] gives the travel time from the i-th waypoint to the j-th waypoint. Values are given in seconds.
             distances:
               type: array
               items:
@@ -526,9 +527,11 @@ components:
         distance:
           type: number
           format: float
+          description: The distance traveled by the route, in float meters.
         duration:
           type: number
           format: float
+          description: The estimated travel time, in float number of seconds.
         geometry:
           type: object
         weight:
@@ -546,9 +549,11 @@ components:
         distance:
           type: number
           format: float
+          description: The distance traveled by the route, in float meters.
         duration:
           type: number
           format: float
+          description: The estimated travel time, in float number of seconds.
         weight:
           type: number
           format: float
@@ -566,9 +571,11 @@ components:
         distance:
           type: number
           format: float
+          description: The distance traveled by the route, in float meters.
         duration:
           type: number
           format: float
+          description: The estimated travel time, in float number of seconds.
         geometry:
           type: object
         weight:
@@ -608,10 +615,12 @@ components:
           type: array
           items:
             type: integer
+          description: The distance, in metres, between each pair of coordinates
         duration:
           type: array
           items:
             type: integer
+          description: The duration between each pair of coordinates, in seconds
         datasources:
           type: array
           items:
