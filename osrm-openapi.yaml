@@ -4,7 +4,10 @@ info:
   description: Open Source Routing Machine API
   version: "1"
 servers:
-  - url: 'http://router.project-osrm.org'
+  - url: 'https://router.project-osrm.org'
+  - url: 'https://routing.openstreetmap.de/routed-car'
+  - url: 'https://routing.openstreetmap.de/routed-bike'
+  - url: 'https://routing.openstreetmap.de/routed-foot'
 paths:
   '/nearest/{version}/{profile}/{coordinate}.json':
     get:
@@ -296,6 +299,134 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+  '/trip/{version}/{profile}/{coordinates}':
+    get:
+      operationId: trip
+      tags:
+        - OSRM
+      parameters:
+        ## ---- PATH DEFAULTS ----
+        - in: path
+          name: version
+          description: "Version of the protocol implemented by the service. v1 for all OSRM 5.x installations"
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: profile
+          description: "Mode of transportation, is determined statically by the Lua profile that is used to prepare the data using osrm-extract. Typically car, bike or foot if using one of the supplied profiles."
+          schema:
+            type: string
+          required: true
+        ## ---- QUERY DEFAULTS ----
+        - in: query
+          name: bearings
+          description: "Limits the search to segments with given bearing in degrees towards true north in clockwise direction."
+          schema:
+            type: string
+        - in: query
+          name: radiuses
+          description: "Limits the search to given radius in meters."
+          schema:
+            type: string
+        - in: query
+          name: generate_hints
+          description: "Adds a Hint to the response which can be used in subsequent requests, see hints parameter."
+          schema:
+            type: boolean
+        - in: query
+          name: hints
+          description: "Hint from previous request to derive position in street network."
+          schema:
+            type: string
+        - in: query
+          name: approaches
+          description: "Keep waypoints on curb side."
+          schema:
+            type: string
+        - in: query
+          name: exclude
+          description: "Additive list of classes to avoid, order does not matter."
+          schema:
+            type: string
+        ## ---- PATH ----
+        - in: path
+          name: coordinates
+          schema:
+            type: string
+          required: true
+        ## ---- QUERY ----
+        - in: query
+          name: roundtrip
+          description: "Returned route is a roundtrip (route returns to first location)"
+          schema:
+            type: boolean
+        - in: query
+          name: source
+          description: "Returned route starts at any or first coordinate"
+          schema:
+            type: string
+            enum:
+              - any
+              - first
+        - in: query
+          name: destination
+          description: "Returned route ends at any or last coordinate"
+          schema:
+            type: string
+            enum:
+              - any
+              - last
+        - in: query
+          name: steps
+          description: "Returned route instructions for each trip"
+          schema:
+            type: boolean
+        - in: query
+          name: annotations
+          description: "Returns additional metadata for each coordinate along the route geometry."
+          schema:
+            type: string
+            enum:
+              - "true"
+              - "false"
+              - nodes
+              - distance
+              - duration
+              - datasources
+              - weight
+              - speed
+        - in: query
+          name: geometries
+          description: "Returned route geometry format (influences overview and per step)"
+          schema:
+            type: string
+            enum:
+              - polyline
+              - polyline6
+              - geojson
+        - in: query
+          name: overview
+          description: "Add overview geometry either full, simplified according to highest zoom level it could be display on, or not at all."
+          schema:
+            type: string
+            enum:
+              - simplified
+              - full
+              - "false"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripResponse'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 components:
   schemas:
     ApiResponse:
@@ -318,6 +449,7 @@ components:
             - NoRoute
             - NoTable
             - NotImplemented
+            - NoTrips
         message:
           type: string
         data_version:
@@ -357,6 +489,7 @@ components:
                 items:
                   type: number
                   format: float
+              description: array of arrays that stores the matrix in row-major order. durations[i][j] gives the travel time from the i-th waypoint to the j-th waypoint. Values are given in seconds.
             distances:
               type: array
               items:
@@ -378,15 +511,30 @@ components:
                 type: array
                 items:
                   type: integer
+    TripResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            waypoints:
+              type: array
+              items:
+                $ref: '#/components/schemas/TripWaypoint'
+            trips:
+              type: array
+              items:
+                $ref: '#/components/schemas/Route'
     Route:
       type: object
       properties:
         distance:
           type: number
           format: float
+          description: The distance traveled by the route, in float meters.
         duration:
           type: number
           format: float
+          description: The estimated travel time, in float number of seconds.
         geometry:
           type: object
         weight:
@@ -404,9 +552,11 @@ components:
         distance:
           type: number
           format: float
+          description: The distance traveled by the route, in float meters.
         duration:
           type: number
           format: float
+          description: The estimated travel time, in float number of seconds.
         weight:
           type: number
           format: float
@@ -424,9 +574,11 @@ components:
         distance:
           type: number
           format: float
+          description: The distance traveled by the route, in float meters.
         duration:
           type: number
           format: float
+          description: The estimated travel time, in float number of seconds.
         geometry:
           type: object
         weight:
@@ -435,7 +587,7 @@ components:
         name:
           type: string
         ref:
-          type: number
+          type: string
         pronunciation:
           type: string
         destinations:
@@ -466,10 +618,12 @@ components:
           type: array
           items:
             type: integer
+          description: The distance, in metres, between each pair of coordinates
         duration:
           type: array
           items:
             type: integer
+          description: The duration between each pair of coordinates, in seconds
         datasources:
           type: array
           items:
@@ -531,10 +685,7 @@ components:
         entry:
           type: array
           items:
-            type: string
-            enum:
-              - "true"
-              - "false"
+            type: bool
         in:
           type: integer
         out:
@@ -551,10 +702,7 @@ components:
           items:
             type: string
         valid:
-          type: string
-          enum:
-            - "true"
-            - "false"
+          type: boolean
     Waypoint:
       type: object
       properties:
@@ -579,3 +727,12 @@ components:
               type: array
               items:
                 type: integer
+    TripWaypoint:
+      allOf:
+        - $ref: '#/components/schemas/Waypoint'
+        - type: object
+          properties:
+            trips_index:
+              type: integer
+            waypoint_index:
+              type: integer
