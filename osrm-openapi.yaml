@@ -4,7 +4,10 @@ info:
   description: Open Source Routing Machine API
   version: "1"
 servers:
-  - url: 'http://router.project-osrm.org'
+  - url: 'https://router.project-osrm.org'
+  - url: 'https://routing.openstreetmap.de/routed-car'
+  - url: 'https://routing.openstreetmap.de/routed-bike'
+  - url: 'https://routing.openstreetmap.de/routed-foot'
 paths:
   '/nearest/{version}/{profile}/{coordinate}.json':
     get:
