@@ -685,7 +685,7 @@ components:
         entry:
           type: array
           items:
-            type: bool
+            type: boolean
         in:
           type: integer
         out:
